@@ -1,0 +1,8 @@
+/** Hoangminh */
+{
+  "compilerOptions": {
+    "paths": {
+      "~/*": ["./src/*"],
+    },
+  }
+}
