@@ -2,11 +2,14 @@ import express from "express";
 import exitHook from "async-exit-hook";
 import { env } from "./config/environment";
 import { CLOSE_DB, CONNECT_DB } from "./config/mongodb";
+import { APIs_V1 } from "./routes/v1";
 
 const START_SERVER = () => {
   const app = express();
 
-  app.get("/", async (req, res) => {
+  app.use("/v1", APIs_V1);
+
+  app.get("/", (req, res) => {
     res.end("<h1>Hello World!</h1><hr>");
   });
 
@@ -17,9 +20,9 @@ const START_SERVER = () => {
   });
 
   exitHook(() => {
-    console.log('Server shutting down');
+    console.log("Server shutting down");
     CLOSE_DB();
-    console.log('Shutting down Successfully');
+    console.log("Shutting down Successfully");
   });
 };
 
