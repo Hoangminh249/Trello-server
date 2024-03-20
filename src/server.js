@@ -3,11 +3,18 @@ import exitHook from "async-exit-hook";
 import { env } from "./config/environment";
 import { CLOSE_DB, CONNECT_DB } from "./config/mongodb";
 import { APIs_V1 } from "./routes/v1";
+import { errorHandlingMiddleware } from "./middlewares/errorHandlingMiddleware";
 
 const START_SERVER = () => {
   const app = express();
 
+  // enable req.body json data
+  app.use(express.json());
+
   app.use("/v1", APIs_V1);
+
+  // Midleware error handler
+  app.use(errorHandlingMiddleware);
 
   app.get("/", (req, res) => {
     res.end("<h1>Hello World!</h1><hr>");
