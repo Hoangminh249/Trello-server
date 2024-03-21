@@ -1,4 +1,5 @@
 import { StatusCodes } from "http-status-codes";
+import { cloneDeep } from "lodash";
 import ApiError from "../../build/src/utils/ApiError";
 import { boardModel } from "../models/boardModel";
 import { slugify } from "../utils/formatters";
@@ -29,7 +30,24 @@ const getDetails = async (boardId) => {
       throw new ApiError(StatusCodes.NOT_FOUND, "Board not found");
     }
 
-    return board;
+    const resBoard = cloneDeep(board);
+    // MongoDb support .equals method using compare ObjectId
+    resBoard.columns.forEach((column) => {
+      column.cards = resBoard.cards.filter((card) =>
+        card.columnId.equals(column._id)
+      );
+    });
+
+    // compare using toString
+    // resBoard.columns.forEach((column) => {
+    //   column.cards = resBoard.cards.filter(
+    //     (card) => card.columnId.toString() === column._id.toString()
+    //   );
+    // });
+
+    delete resBoard.cards;
+
+    return resBoard;
   } catch (error) {
     console.log(error);
     throw error;
