@@ -1,4 +1,5 @@
 import Joi from "joi";
+import { ObjectId } from "mongodb";
 import { GET_DB } from "../config/mongodb";
 import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from "../utils/validators";
 
@@ -18,24 +19,47 @@ const BOARD_COLLECTION_SCHEMA = Joi.object({
 
 const createNew = async (data) => {
   try {
+    const validData = await validateBeforeCreate(data);
+
     const createdBoard = await GET_DB()
       .collection(BOARD_COLLECTION_NAME)
-      .insertOne(data);
+      .insertOne(validData);
     return createdBoard;
   } catch (error) {
     throw new Error(error);
   }
 };
 
-const findOneById = async (id) => {
+const getDetails = async (id) => {
   try {
-    const data = await GET_DB().collection(BOARD_COLLECTION_NAME).findOne({
-      _id: id,
-    });
-    return data
+    const data = await GET_DB()
+      .collection(BOARD_COLLECTION_NAME)
+      .findOne({
+        _id: new ObjectId(id),
+      });
+    return data;
   } catch (error) {
     console.log(error);
   }
+};
+
+const findOneById = async (id) => {
+  try {
+    const data = await GET_DB()
+      .collection(BOARD_COLLECTION_NAME)
+      .findOne({
+        _id: new ObjectId(id),
+      });
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const validateBeforeCreate = async (data) => {
+  return await BOARD_COLLECTION_SCHEMA.validateAsync(data, {
+    abortEarly: false,
+  });
 };
 
 export const boardModel = {
@@ -43,4 +67,5 @@ export const boardModel = {
   BOARD_COLLECTION_SCHEMA,
   createNew,
   findOneById,
+  getDetails,
 };

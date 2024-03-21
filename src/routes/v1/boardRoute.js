@@ -8,7 +8,9 @@ Router.route("/")
   .get((req, res) => {
     res.status(StatusCodes.OK).json({ message: "API get" });
   })
-
   .post(boardValidation.createNew, boradController.createNew);
+
+Router.route("/:id")
+  .get(boradController.getDetails)
 
 export const boardRoute = Router;
