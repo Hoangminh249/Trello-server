@@ -70,7 +70,7 @@ const getDetails = async (id) => {
       ])
       .toArray();
 
-    return data[0] || {};
+    return data[0] || null;
   } catch (error) {
     throw new Error(error);
   }
